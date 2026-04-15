@@ -21,6 +21,9 @@ class GameEngine {
         // 选中的植物
         this.selectedPlant = null;
 
+        // 植物冷却时间跟踪
+        this.plantCooldowns = {};
+
         // 爆炸效果
         this.explosions = [];
 
@@ -58,6 +61,7 @@ class GameEngine {
         this.sunCount = GAME_CONFIG.INITIAL_SUN;
         this.gameSpeed = GAME_CONFIG.NORMAL_SPEED;
         this.selectedPlant = null;
+        this.plantCooldowns = {};
         this.explosions = [];
         this.particles = [];
 
@@ -139,6 +143,16 @@ class GameEngine {
             if (p.life <= 0) p.active = false;
         });
         this.particles = this.particles.filter(p => p.active);
+
+        // 更新冷却时间
+        for (const id in this.plantCooldowns) {
+            if (this.plantCooldowns[id] > 0) {
+                this.plantCooldowns[id] -= dt * speed;
+                if (this.plantCooldowns[id] < 0) {
+                    this.plantCooldowns[id] = 0;
+                }
+            }
+        }
 
         // 更新UI
         this.updatePlantBarUI();
@@ -224,10 +238,12 @@ class GameEngine {
         if (!plant) return;
 
         if (this.sunCount < plant.cost) return;
+        if (this.plantCooldowns[plant.id] > 0) return;
 
         if (this.plantManager.place(plant, row, col)) {
             this.sunCount -= plant.cost;
             this.updateSunDisplay();
+            this.plantCooldowns[plant.id] = plant.cooldown || 5000; // 默认5秒冷却
             this.selectedPlant = null;
             this.updatePlantBarSelection();
         }
@@ -272,11 +288,23 @@ class GameEngine {
         document.querySelectorAll('.plant-card').forEach(card => {
             const id = card.dataset.id;
             const plantData = PLANTS_DATA.find(p => p.id === id);
+            const cooldownEl = card.querySelector('.plant-card-cooldown');
 
-            if (plantData && this.sunCount < plantData.cost) {
+            const cooldown = this.plantCooldowns[id] || 0;
+            const remainingSeconds = Math.ceil(cooldown / 1000);
+
+            if (cooldown > 0) {
                 card.classList.add('disabled');
+                cooldownEl.textContent = remainingSeconds;
+                cooldownEl.style.display = 'flex';
             } else {
-                card.classList.remove('disabled');
+                cooldownEl.textContent = '';
+                cooldownEl.style.display = 'none';
+                if (plantData && this.sunCount < plantData.cost) {
+                    card.classList.add('disabled');
+                } else {
+                    card.classList.remove('disabled');
+                }
             }
         });
     }
