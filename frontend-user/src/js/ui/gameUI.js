@@ -96,12 +96,31 @@ class GameUI {
             card.innerHTML = `
                 <span class="plant-card-icon">${plant.icon}</span>
                 <span class="plant-card-cost">${plant.cost}</span>
+                <span class="plant-card-cooldown"></span>
             `;
             card.title = `${plant.name} - ${plant.desc} (${plant.cost}☀️)`;
             card.addEventListener('click', () => {
                 this.app.engine.selectPlant(plant);
             });
             bar.appendChild(card);
+        });
+    }
+
+    updatePlantCooldowns() {
+        const engine = this.app.engine;
+        document.querySelectorAll('.plant-card').forEach(card => {
+            const id = card.dataset.id;
+            const remaining = engine.getPlantCooldownRemaining(id);
+            const cooldownEl = card.querySelector('.plant-card-cooldown');
+            
+            if (remaining > 0) {
+                const seconds = Math.ceil(remaining / 1000);
+                cooldownEl.textContent = seconds;
+                cooldownEl.style.display = 'flex';
+            } else {
+                cooldownEl.textContent = '';
+                cooldownEl.style.display = 'none';
+            }
         });
     }
 }

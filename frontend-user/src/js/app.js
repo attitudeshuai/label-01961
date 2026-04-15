@@ -3,7 +3,7 @@
  */
 class App {
     constructor() {
-        this.engine = new GameEngine();
+        this.engine = new GameEngine(this);
         this.menuUI = new MenuUI(this);
         this.almanacUI = new AlmanacUI(this);
         this.gameUI = new GameUI(this);
