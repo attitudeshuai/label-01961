@@ -2,7 +2,8 @@
  * 游戏引擎 - 核心循环
  */
 class GameEngine {
-    constructor() {
+    constructor(app) {
+        this.app = app;
         this.canvas = null;
         this.renderer = null;
         this.sunManager = new SunManager(this);
@@ -20,6 +21,9 @@ class GameEngine {
 
         // 选中的植物
         this.selectedPlant = null;
+
+        // 植物冷却状态 { plantId: remainingTime }
+        this.plantCooldowns = {};
 
         // 爆炸效果
         this.explosions = [];
@@ -58,6 +62,7 @@ class GameEngine {
         this.sunCount = GAME_CONFIG.INITIAL_SUN;
         this.gameSpeed = GAME_CONFIG.NORMAL_SPEED;
         this.selectedPlant = null;
+        this.plantCooldowns = {};
         this.explosions = [];
         this.particles = [];
 
@@ -116,6 +121,9 @@ class GameEngine {
     update(dt) {
         const speed = this.gameSpeed;
 
+        // 更新植物冷却
+        this.updatePlantCooldowns(dt, speed);
+
         // 更新各系统
         this.sunManager.update(dt, speed);
         this.plantManager.update(dt, speed);
@@ -142,6 +150,7 @@ class GameEngine {
 
         // 更新UI
         this.updatePlantBarUI();
+        this.app.gameUI.updatePlantCooldowns();
     }
 
     draw() {
@@ -224,10 +233,12 @@ class GameEngine {
         if (!plant) return;
 
         if (this.sunCount < plant.cost) return;
+        if (this.isPlantOnCooldown(plant.id)) return;
 
         if (this.plantManager.place(plant, row, col)) {
             this.sunCount -= plant.cost;
             this.updateSunDisplay();
+            this.startPlantCooldown(plant);
             this.selectedPlant = null;
             this.updatePlantBarSelection();
         }
@@ -235,6 +246,7 @@ class GameEngine {
 
     selectPlant(plantData) {
         if (this.sunCount < plantData.cost) return;
+        if (this.isPlantOnCooldown(plantData.id)) return;
         this.selectedPlant = plantData;
         this.updatePlantBarSelection();
     }
@@ -268,12 +280,36 @@ class GameEngine {
         }
     }
 
+    updatePlantCooldowns(dt, speed) {
+        for (const plantId in this.plantCooldowns) {
+            if (this.plantCooldowns[plantId] > 0) {
+                this.plantCooldowns[plantId] -= dt * speed;
+                if (this.plantCooldowns[plantId] <= 0) {
+                    this.plantCooldowns[plantId] = 0;
+                }
+            }
+        }
+    }
+
+    isPlantOnCooldown(plantId) {
+        return this.plantCooldowns[plantId] > 0;
+    }
+
+    getPlantCooldownRemaining(plantId) {
+        return this.plantCooldowns[plantId] || 0;
+    }
+
+    startPlantCooldown(plantData) {
+        this.plantCooldowns[plantData.id] = plantData.cooldown;
+    }
+
     updatePlantBarUI() {
         document.querySelectorAll('.plant-card').forEach(card => {
             const id = card.dataset.id;
             const plantData = PLANTS_DATA.find(p => p.id === id);
+            const onCooldown = this.isPlantOnCooldown(id);
 
-            if (plantData && this.sunCount < plantData.cost) {
+            if ((plantData && this.sunCount < plantData.cost) || onCooldown) {
                 card.classList.add('disabled');
             } else {
                 card.classList.remove('disabled');

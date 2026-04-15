@@ -11,7 +11,8 @@ const PLANTS_DATA = [
         desc: '发射豌豆攻击僵尸',
         attackInterval: 1500,
         projectile: 'PEA',
-        type: 'shooter'
+        type: 'shooter',
+        cooldown: 7500
     },
     {
         id: 'sunflower',
@@ -22,7 +23,8 @@ const PLANTS_DATA = [
         desc: '定期产生阳光',
         sunInterval: 9000,
         sunAmount: 50,
-        type: 'producer'
+        type: 'producer',
+        cooldown: 7500
     },
     {
         id: 'wallnut',
@@ -31,7 +33,8 @@ const PLANTS_DATA = [
         cost: 50,
         hp: 4000,
         desc: '高血量防御植物',
-        type: 'wall'
+        type: 'wall',
+        cooldown: 30000
     },
     {
         id: 'snowpea',
@@ -42,7 +45,8 @@ const PLANTS_DATA = [
         desc: '发射冰冻豌豆减速僵尸',
         attackInterval: 1500,
         projectile: 'FROZEN_PEA',
-        type: 'shooter'
+        type: 'shooter',
+        cooldown: 7500
     },
     {
         id: 'repeater',
@@ -54,7 +58,8 @@ const PLANTS_DATA = [
         attackInterval: 1500,
         projectile: 'PEA',
         shots: 2,
-        type: 'shooter'
+        type: 'shooter',
+        cooldown: 7500
     },
     {
         id: 'threepeater',
@@ -66,7 +71,8 @@ const PLANTS_DATA = [
         attackInterval: 1500,
         projectile: 'PEA',
         threeRow: true,
-        type: 'shooter'
+        type: 'shooter',
+        cooldown: 7500
     },
     {
         id: 'torchwood',
@@ -75,7 +81,8 @@ const PLANTS_DATA = [
         cost: 175,
         hp: 300,
         desc: '经过的豌豆变为火焰豌豆',
-        type: 'torch'
+        type: 'torch',
+        cooldown: 7500
     },
     {
         id: 'chomper',
@@ -86,7 +93,8 @@ const PLANTS_DATA = [
         desc: '一口吞掉前方僵尸',
         attackInterval: 30000,
         chompDamage: 1800,
-        type: 'chomper'
+        type: 'chomper',
+        cooldown: 7500
     },
     {
         id: 'potatomine',
@@ -97,7 +105,8 @@ const PLANTS_DATA = [
         desc: '准备后炸飞接触的僵尸',
         armTime: 12000,
         explodeDamage: 1800,
-        type: 'mine'
+        type: 'mine',
+        cooldown: 30000
     },
     {
         id: 'cactus',
@@ -108,7 +117,8 @@ const PLANTS_DATA = [
         desc: '发射尖刺攻击僵尸',
         attackInterval: 1500,
         projectile: 'NEEDLE',
-        type: 'shooter'
+        type: 'shooter',
+        cooldown: 7500
     },
     {
         id: 'magnetshroom',
@@ -118,7 +128,8 @@ const PLANTS_DATA = [
         hp: 300,
         desc: '吸走僵尸的金属防具',
         magnetInterval: 12000,
-        type: 'magnet'
+        type: 'magnet',
+        cooldown: 7500
     },
     {
         id: 'pumpkin',
@@ -127,7 +138,8 @@ const PLANTS_DATA = [
         cost: 125,
         hp: 4000,
         desc: '可套在其他植物上的护甲',
-        type: 'armor'
+        type: 'armor',
+        cooldown: 30000
     },
     {
         id: 'starfruit',
@@ -138,7 +150,8 @@ const PLANTS_DATA = [
         desc: '向五个方向发射星星',
         attackInterval: 1500,
         projectile: 'STAR',
-        type: 'starfruit'
+        type: 'starfruit',
+        cooldown: 7500
     },
     {
         id: 'cornpult',
@@ -149,7 +162,8 @@ const PLANTS_DATA = [
         desc: '投掷玉米粒攻击僵尸',
         attackInterval: 2500,
         projectile: 'CORN',
-        type: 'lobber'
+        type: 'lobber',
+        cooldown: 7500
     },
     {
         id: 'cabbagepult',
@@ -160,7 +174,8 @@ const PLANTS_DATA = [
         desc: '投掷卷心菜攻击僵尸',
         attackInterval: 2500,
         projectile: 'CABBAGE',
-        type: 'lobber'
+        type: 'lobber',
+        cooldown: 7500
     },
     {
         id: 'melonpult',
@@ -171,7 +186,8 @@ const PLANTS_DATA = [
         desc: '投掷西瓜造成溅射伤害',
         attackInterval: 3000,
         projectile: 'MELON',
-        type: 'lobber'
+        type: 'lobber',
+        cooldown: 7500
     },
     {
         id: 'spikeweed',
@@ -182,7 +198,8 @@ const PLANTS_DATA = [
         desc: '僵尸经过时造成伤害',
         spikeDamage: 20,
         spikeInterval: 800,
-        type: 'spike'
+        type: 'spike',
+        cooldown: 7500
     },
     {
         id: 'jalapeno',
@@ -192,7 +209,8 @@ const PLANTS_DATA = [
         hp: 300,
         desc: '燃烧整行僵尸（一次性）',
         rowDamage: 1800,
-        type: 'instant_row'
+        type: 'instant_row',
+        cooldown: 50000
     },
     {
         id: 'cherrybomb',
@@ -203,7 +221,8 @@ const PLANTS_DATA = [
         desc: '炸飞周围所有僵尸（一次性）',
         explodeRadius: 1,
         explodeDamage: 1800,
-        type: 'instant_bomb'
+        type: 'instant_bomb',
+        cooldown: 50000
     },
     {
         id: 'squash',
@@ -213,6 +232,7 @@ const PLANTS_DATA = [
         hp: 300,
         desc: '跳起压扁附近僵尸（一次性）',
         squashDamage: 1800,
-        type: 'squash'
+        type: 'squash',
+        cooldown: 30000
     }
 ];
