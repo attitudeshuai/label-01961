@@ -21,6 +21,10 @@ class GameEngine {
         // 选中的植物
         this.selectedPlant = null;
 
+        // 植物冷却系统
+        this.plantCooldowns = {};
+        this.PLANT_COOLDOWN = 5000;
+
         // 爆炸效果
         this.explosions = [];
 
@@ -58,6 +62,7 @@ class GameEngine {
         this.sunCount = GAME_CONFIG.INITIAL_SUN;
         this.gameSpeed = GAME_CONFIG.NORMAL_SPEED;
         this.selectedPlant = null;
+        this.plantCooldowns = {};
         this.explosions = [];
         this.particles = [];
 
@@ -139,6 +144,16 @@ class GameEngine {
             if (p.life <= 0) p.active = false;
         });
         this.particles = this.particles.filter(p => p.active);
+
+        // 更新植物冷却
+        for (const plantId in this.plantCooldowns) {
+            if (this.plantCooldowns[plantId] > 0) {
+                this.plantCooldowns[plantId] -= dt * speed;
+                if (this.plantCooldowns[plantId] < 0) {
+                    this.plantCooldowns[plantId] = 0;
+                }
+            }
+        }
 
         // 更新UI
         this.updatePlantBarUI();
@@ -227,6 +242,7 @@ class GameEngine {
 
         if (this.plantManager.place(plant, row, col)) {
             this.sunCount -= plant.cost;
+            this.plantCooldowns[plant.id] = this.PLANT_COOLDOWN;
             this.updateSunDisplay();
             this.selectedPlant = null;
             this.updatePlantBarSelection();
@@ -235,6 +251,7 @@ class GameEngine {
 
     selectPlant(plantData) {
         if (this.sunCount < plantData.cost) return;
+        if (this.plantCooldowns[plantData.id] > 0) return;
         this.selectedPlant = plantData;
         this.updatePlantBarSelection();
     }
@@ -272,8 +289,19 @@ class GameEngine {
         document.querySelectorAll('.plant-card').forEach(card => {
             const id = card.dataset.id;
             const plantData = PLANTS_DATA.find(p => p.id === id);
+            const cooldown = this.plantCooldowns[id] || 0;
 
-            if (plantData && this.sunCount < plantData.cost) {
+            const cooldownEl = card.querySelector('.plant-card-cooldown');
+            if (cooldown > 0) {
+                const seconds = Math.ceil(cooldown / 1000);
+                cooldownEl.textContent = seconds;
+                card.classList.add('cooling');
+            } else {
+                cooldownEl.textContent = '';
+                card.classList.remove('cooling');
+            }
+
+            if ((plantData && this.sunCount < plantData.cost) || cooldown > 0) {
                 card.classList.add('disabled');
             } else {
                 card.classList.remove('disabled');
