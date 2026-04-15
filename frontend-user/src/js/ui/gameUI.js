@@ -96,6 +96,7 @@ class GameUI {
             card.innerHTML = `
                 <span class="plant-card-icon">${plant.icon}</span>
                 <span class="plant-card-cost">${plant.cost}</span>
+                <span class="plant-card-cooldown"></span>
             `;
             card.title = `${plant.name} - ${plant.desc} (${plant.cost}☀️)`;
             card.addEventListener('click', () => {
